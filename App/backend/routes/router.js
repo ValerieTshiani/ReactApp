@@ -60,7 +60,7 @@ router.get('/users', async (req, res) => {
         if (err) throw err;
 
         try {
-            const qry = `SELECT username, fullname, entry_date  FROM users `;
+            const qry = `SELECT *  FROM users `;
             conn.query(qry, (err, result) => {
                 conn.release();
                 if (err) throw err;
@@ -73,25 +73,96 @@ router.get('/users', async (req, res) => {
     });
 });
 
-// router.post('/addUser', async (req, res) => {
-//     const user_name = 
-//     const full_name =
+router.get('/getSingleUser', async (req, res) => {
+    const user_id =  req.body.userid
+    pool.getConnection( (err, conn) => {
+        if (err) throw err;
 
-//    // res.end ('NA')
+        try {
+            const qry = `SELECT *  FROM users where id = ? `;
+            conn.query(qry, [user_id], (err, result) => {
+                conn.release();
+                if (err) throw err;
+                res.send(JSON.stringify(result));
+            });
+        } catch (err) {
+            console.log(err);
+            res.end();
+        }
+    });
+});
 
-//    pool.getConnection( (err, conn) => {
-//        if (err) throw err;
 
-//        const qry = `INSERT INTO users (username, fullname, entry_date) VALUES(?,?,now())`;
-//        conn.query(qry, [user_name, full_name], (err, result) => {
-//            conn.release();
-//            if (err) throw err;
-//            console.log('User Added added!');
-//        });
+router.post('/addUser', async (req, res) => {
+    const user_name =  req.body.username;
+    const first_name = req.body.firstname;
+    const last_name = req.body.lastname;
+    const email = req.body.email;
+    const cellphone = req.body.cellphone
 
-//        res.redirect(process.env.redirect_url + '/addUsers');
-//        res.end();
-//    });
-// });
+   // res.end ('NA')
+
+   pool.getConnection( (err, conn) => {
+       if (err) throw err;
+
+       const qry = `INSERT INTO users (username, firstname, lastname,email, cellphone, entry_date) VALUES(?,?,?,?,?,now())`;
+       conn.query(qry, [user_name, first_name, last_name, email, cellphone], (err, result) => {
+           conn.release();
+           if (err) throw err;
+           console.log('User Added added!');
+       });
+
+       res.redirect(process.env.redirect_url + '/Users');
+       res.end();
+   });
+});
+router.post('/deleteUser', async (req, res) => {
+    const user_id =  req.body.userid
+     console.log('user_id', user_id)
+
+   // res.end ('NA')
+
+   pool.getConnection( (err, conn) => {
+       if (err) throw err;
+
+       const qry = `DELETE FROM users where id = ?`;
+       conn.query(qry, [user_id], (err, result) => {
+           conn.release();
+           if (err) throw err;
+           console.log('User Deleted!');
+       });
+
+       res.redirect(process.env.redirect_url + '/Users');
+       res.end();
+   });
+});
+router.post('/editUser', async (req, res) => {
+    const user_id =  req.body.userid
+    const user_name =  req.body.username;
+    const first_name = req.body.firstname;
+    const last_name = req.body.lastname;
+    const email = req.body.email;
+    const cellphone = req.body.cellphone
+    const password = req.body.password
+     console.log('the body', req.body)
+
+   // res.end ('NA')
+
+   pool.getConnection( (err, conn) => {
+       if (err) throw err;
+
+       const qry = `UPDATE  users 
+                    SET username = ?, firstname = ?, lastname = ?, email = ?, cellphone = ?, password = ? 
+                    WHERE id = ?`;
+       conn.query(qry, [user_name, first_name, last_name, email, cellphone, password,  user_id], (err, result) => {
+           conn.release();
+           if (err) throw err;
+           console.log('User Updated!');
+       });
+     // add feedback from DB for success or no success, you need a try catch here
+       res.redirect(process.env.redirect_url + '/Users');
+       res.end();
+   });
+});
 
 module.exports = router;

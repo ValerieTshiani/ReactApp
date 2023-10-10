@@ -3,6 +3,7 @@ import './App.css';
 import Nav from './components/Nav';
 import Home from './components/Home';
 import Tweet from './components/Tweet';
+import Users from './components/Users';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 function App() {
@@ -11,8 +12,9 @@ function App() {
       <div className="App">
           <Nav />
           <Routes>
-          <Route exact path="/" element={<Home/>}/>
+            <Route exact path="/" element={<Home/>}/>
             <Route exact path="/tweets" element={<Tweet/>} />
+            <Route exact path="/users" element={<Users/>} />
           </Routes>
       </div>
     </Router>
