@@ -9,25 +9,24 @@ function User() {
     const [items, setItems] = useState([]);
 
     const fetchItems = async () => {
-        const data = await fetch('/users');
+        const data = await fetch('https://servertest.valerietshiani.co.za/users');
         const items = await data.json();
         setItems(items);
     };
-    // const fetchUser = async () => {
-    //     const user = await fetch('/getSingleUser');
-    //     const user_items = await user.json();
-    //     setItems(user_items);
-    // };
     const [showForm, setShowForm] = useState(false);
 
     const toggleForm = () => {
         setShowForm(!showForm);
     };
 
-    const [isEditing, setIsEditing] = useState(false);
+    const [editingItemId, setEditingItemId] = useState(false);
 
-    const editClick = () => {
-        setIsEditing(!isEditing);
+    const editClick = (itemId) => {
+        if (editingItemId === itemId) {
+            setEditingItemId(null);
+        } else {
+            setEditingItemId(itemId);
+        }
     };
 
     return(
@@ -37,7 +36,7 @@ function User() {
                 <button onClick={toggleForm} class="btn btn-primary mb-2"> {showForm ? 'Close Form to add user' : 'Show Form to add user'} </button>
                 <br></br>
                 {showForm && (
-                    <form method="POST" action="/addUser">
+                    <form method="POST" action="https://servertest.valerietshiani.co.za/addUser">
                         <div class="input-group justify-content-center">
                         <div>
                                 <div style={{padding: "10px"}}>
@@ -73,10 +72,10 @@ function User() {
                {/* -------------------------------------User list------------------------------- */}
                 {
                 items.map(item => (
-                    <div class="row padding">
-                        <div class="alert alert-info" role="alert">
-                            <i class="fa fa-user mr-2"></i>
-                             <i> 
+                    <div key={item.id} class="row padding card m-2  " style = {{width : "500px"}}>
+                        <div>
+                            <i class="fa fa-user  card m-2 " ></i>
+                             <i class = "card-body"> 
                                <div>ID : {item.id}  {}</div>
                                 <div>first name : {item.firstname} </div>
                                 <div>last name : {item.lastname} </div>
@@ -85,22 +84,22 @@ function User() {
                                 <div>user name : {item.username} </div>
                                 <div>loaded first on  : ({item.entry_date}) </div>
                             </i> 
-                            <form method="POST" action="/deleteUser"> 
+                            <form method="POST" action="https://servertest.valerietshiani.co.za/deleteUser"> 
                                 <input type="hidden" name="userid" value={item.id} />
                                 <input type="submit" value="Delete User" class="btn btn-primary mb-2"  style={{padding: "10px"}}/>
                             </form>
-                            <button onClick={editClick} class="btn btn-primary mb-2"> {isEditing ? 'Close form to edit user' : 'Edit user'} </button>
+                            <button onClick={() => editClick(item.id)} class="btn btn-primary mb-2"> { editingItemId === item.id ? 'Close form to edit user' : 'Edit user'} </button>
                             
     
                             <div>
-                                {isEditing && (
-                                    <form method="POST" action="/editUser">
+                                {editingItemId === item.id &&  (
+                                    <form method="POST" action="https://servertest.valerietshiani.co.za/editUser">
                                         <div class="input-group justify-content-center">
                                         <div>
                                                 <input type="hidden" name="userid" value={item.id} />
                                                 <div style={{padding: "10px"}}>
                                                     <label>First Name: </label>
-                                                    <input type="text" name="firstname" defaultValue={item.firtname} class="form-control"/>
+                                                    <input type="text" name="firstname" defaultValue={item.firstname} class="form-control"/>
                                                     
                                                 </div>
                                                 <div style={{padding: "10px"}}>
