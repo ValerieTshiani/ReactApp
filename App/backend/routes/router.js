@@ -5,20 +5,12 @@ const pool =  require('../config/db.js');
 require('dotenv/config');
 
 router.get('/tweets', async (req, res) => {
-    // const str =  [{
-    //     "name" : "cider kai",
-    //     "msg" : "this is my first tweet" ,
-    //     "username" : "actual words"
-
-    // }];
-    // res.end(JSON.stringify('str'));
-    
-
+    console.log('we have entereed')
     pool.getConnection( (err, conn) => {
         if (err) throw err;
 
         try {
-            const qry = `SELECT u.username, u.fullname, t.tweet FROM users as u INNER JOIN tweets as t ON u.id=t.user_id`;
+            const qry = `SELECT u.username, u.firstname, t.tweet FROM users as u INNER JOIN tweets as t ON u.id=t.user_id  order by t.id desc`;
             console.log('qryccccc', qry)
             conn.query(qry, (err, result) => {
                 conn.release();
@@ -36,20 +28,26 @@ router.post('/addTweet', async (req, res) => {
      const userTweet = req.body.tweetInput;
     const userId = 4; // 1=codrkai, 2=eaglefang
 
-    // res.end ('NA')
-
     pool.getConnection( (err, conn) => {
         if (err) throw err;
-
-        const qry = `INSERT INTO tweets (tweet, user_id) VALUES(?,?)`;
-        conn.query(qry, [userTweet, userId], (err, result) => {
-            conn.release();
-            if (err) throw err;
-            console.log('Tweet added!');
-        });
-
-        res.redirect(process.env.redirect_url + '/tweets');
-        res.end();
+        try {
+            const qry = `INSERT INTO tweets (tweet, user_id) VALUES(?,?)`;
+            conn.query(qry, [userTweet, userId], (err, result) => {
+                conn.release();
+                if (err) {
+                    console.log(err);
+                    res.status(500).json({ message: 'Error adding tweet' });
+                  } else {
+                    console.log('Tweet added!');
+                    res.json({ message: 'Tweet added successfully' });
+                  }
+            });
+        }
+        catch (error) {
+            console.log(err);
+            res.status(500).json({ message: 'Error adding tweet' });
+        }
+       
     });
 });
 
@@ -60,7 +58,7 @@ router.get('/users', async (req, res) => {
         if (err) throw err;
 
         try {
-            const qry = `SELECT *  FROM users `;
+            const qry = `SELECT *  FROM users order by id desc `;
             conn.query(qry, (err, result) => {
                 conn.release();
                 if (err) throw err;
@@ -100,8 +98,6 @@ router.post('/addUser', async (req, res) => {
     const email = req.body.email;
     const cellphone = req.body.cellphone
 
-   // res.end ('NA')
-
    pool.getConnection( (err, conn) => {
        if (err) throw err;
 
@@ -112,15 +108,13 @@ router.post('/addUser', async (req, res) => {
            console.log('User Added added!');
        });
 
-       res.redirect(process.env.redirect_url + '/Users');
+       res.redirect('https://valerietshiani.co.za/users');
        res.end();
    });
 });
 router.post('/deleteUser', async (req, res) => {
     const user_id =  req.body.userid
      console.log('user_id', user_id)
-
-   // res.end ('NA')
 
    pool.getConnection( (err, conn) => {
        if (err) throw err;
@@ -145,8 +139,6 @@ router.post('/editUser', async (req, res) => {
     const cellphone = req.body.cellphone
     const password = req.body.password
      console.log('the body', req.body)
-
-   // res.end ('NA')
 
    pool.getConnection( (err, conn) => {
        if (err) throw err;
