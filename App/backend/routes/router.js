@@ -44,7 +44,7 @@ router.post('/addTweet', async (req, res) => {
             });
         }
         catch (error) {
-            console.log(err);
+            console.log(error);
             res.status(500).json({ message: 'Error adding tweet' });
         }
        
@@ -154,6 +154,41 @@ router.post('/editUser', async (req, res) => {
      // add feedback from DB for success or no success, you need a try catch here
        res.redirect(process.env.redirect_url + '/Users');
        res.end();
+   });
+});
+
+/// Handles login
+router.post('/login', async (req, res) => {
+    const userEmail = req.body.email;
+   const userPassword = req.body.password; 
+
+   console.log('userEmail' , userEmail )
+   console.log('userPassword', userPassword)
+
+   pool.getConnection( (err, conn) => {
+       if (err) throw err;
+       try {
+           const qry = `Select * from users where (email = ?  or username = ?) and password = ? `;
+           conn.query(qry, [userEmail, userEmail, userPassword], (err, result, data) => {
+               conn.release();
+               if (err  || result.length === 0) {
+                   console.log(err);
+                   res.status(500).json({ message: 'Login details not found', result : [] });
+                 } else {
+                        console.log('Login successfully');
+                        console.log('results', result)
+                        res.json({ message: 'Login successfully', result: result });
+
+                  }
+                 
+                 
+           });
+       }
+       catch (error) {
+           console.log(error);
+           res.status(500).json({ message: 'Error in login' });
+       }
+      
    });
 });
 

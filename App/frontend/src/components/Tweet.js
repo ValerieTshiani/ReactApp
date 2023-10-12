@@ -48,13 +48,13 @@ function Tweet() {
 
     return(
         <section>
-            <div class="container-fluid">
-                <h1 class="mt-5">Tweets</h1>
+            <div className="container-fluid">
+                <h1 className="mt-5">Tweets</h1>
                 <form method="POST" action="/addTweet" onSubmit={handleSubmit}>
-                    <div class="input-group justify-content-center">
-                        <div class="input-group-prepend">
-                            <input type="text" name="tweetInput" class="form-control"  value={tweetInput}onChange={(e) => setTweetInput(e.target.value)} />
-                            <input type="submit" value="Send" class="btn btn-primary mb-2" />
+                    <div className="input-group justify-content-center">
+                        <div className="input-group-prepend">
+                            <input type="text" name="tweetInput" className="form-control"  value={tweetInput}onChange={(e) => setTweetInput(e.target.value)} />
+                            <input type="submit" value="Send" className="btn btn-primary mb-2" />
                         </div>
                     </div>
                 </form>
@@ -65,10 +65,10 @@ function Tweet() {
                     )}
                 {
                 items.map(item => (
-                    <div class="row padding">
-                        <div class="card m-2 " style={{ width: "80%" }}>
-                            <i class="fa fa-user mr-2"></i> 
-                            <i class="card-body">
+                    <div className="row padding">
+                        <div className="card m-2 " style={{ width: "80%" }}>
+                            <i className="fa fa-user mr-2"></i> 
+                            <i className="card-body">
                                 <div> <b> first name </b> {item.firstname} </div>
                                 <div> <b> Username </b> {item.username} </div>
                                 <div> <b> This is the tweet </b>  :  <p style = {{color: "darkgreen"}}> {item.tweet}</p>  </div>
